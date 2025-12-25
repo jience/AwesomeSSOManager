@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Outlet, Navigate, useLocation } from 'react-router-dom';
-import { User } from '../types';
+import { User } from '../types/index';
 import { SettingsIcon, LockIcon, HomeIcon } from '../components/Icons';
 
 interface AdminLayoutProps {

@@ -1,6 +1,7 @@
-import { ProviderConfig, ProtocolType } from '../types';
+import { ProviderConfig, ProtocolType } from '../types/index';
+import { APP_CONFIG } from '../config';
 
-const STORAGE_KEY = 'sso_providers_config';
+const { API_MODE, API_BASE_URL, STORAGE_KEY } = APP_CONFIG;
 
 const DEFAULT_PROVIDERS: ProviderConfig[] = [
   {
@@ -49,7 +50,9 @@ const DEFAULT_PROVIDERS: ProviderConfig[] = [
   }
 ];
 
-export const getProviders = (): ProviderConfig[] => {
+// --- Local Storage Implementation (Default for Demo) ---
+
+const getLocalProviders = (): ProviderConfig[] => {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_PROVIDERS));
@@ -58,8 +61,8 @@ export const getProviders = (): ProviderConfig[] => {
   return JSON.parse(stored);
 };
 
-export const saveProvider = (provider: ProviderConfig): void => {
-  const providers = getProviders();
+const saveLocalProvider = (provider: ProviderConfig): void => {
+  const providers = getLocalProviders();
   const existingIndex = providers.findIndex(p => p.id === provider.id);
   
   if (existingIndex >= 0) {
@@ -71,11 +74,71 @@ export const saveProvider = (provider: ProviderConfig): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(providers));
 };
 
-export const deleteProvider = (id: string): void => {
-  const providers = getProviders().filter(p => p.id !== id);
+const deleteLocalProvider = (id: string): void => {
+  const providers = getLocalProviders().filter(p => p.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(providers));
 };
 
+// --- Hybrid Export ---
+
+export const getProviders = (): ProviderConfig[] => {
+  if (API_MODE) {
+    console.warn("API_MODE is enabled but synchronous getProviders called. Please refactor UI to use useEffect/async.");
+    return [];
+  }
+  return getLocalProviders();
+};
+
+// Async version for future integration
+export const fetchProvidersAsync = async (): Promise<ProviderConfig[]> => {
+    if (API_MODE) {
+        try {
+            const res = await fetch(`${API_BASE_URL}/providers`);
+            return await res.json();
+        } catch (e) {
+            console.error("Failed to fetch from backend", e);
+            return [];
+        }
+    }
+    return getLocalProviders();
+};
+
+export const saveProvider = async (provider: ProviderConfig): Promise<void> => {
+  if (API_MODE) {
+      try {
+        await fetch(`${API_BASE_URL}/providers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(provider)
+        });
+      } catch(e) {
+          console.error("Save failed", e);
+      }
+      return;
+  }
+  saveLocalProvider(provider);
+};
+
+export const deleteProvider = async (id: string): Promise<void> => {
+  if (API_MODE) {
+      try {
+        await fetch(`${API_BASE_URL}/providers/${id}`, { method: 'DELETE' });
+      } catch(e) {
+          console.error("Delete failed", e);
+      }
+      return;
+  }
+  deleteLocalProvider(id);
+};
+
 export const getProviderById = (id: string): ProviderConfig | undefined => {
-  return getProviders().find(p => p.id === id);
+  return getLocalProviders().find(p => p.id === id);
+};
+
+// --- Helper for SSO Login URL ---
+export const getSSOLoginUrl = (providerId: string): string => {
+    if (API_MODE) {
+        return `${API_BASE_URL.replace('/api', '')}/auth/login/${providerId}`;
+    }
+    return '#'; 
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User } from '../types';
+import { User } from '../types/index';
 import { Button, Card, Badge } from '../components/UI';
 import { UserIcon, LogOutIcon, KeyIcon, ShieldIcon, CheckCircleIcon } from '../components/Icons';
 

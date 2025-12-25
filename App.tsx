@@ -6,7 +6,7 @@ import ProviderList from './pages/Admin/ProviderList';
 import ProviderConfigForm from './pages/Admin/ProviderConfigForm';
 import Dashboard from './pages/Admin/Dashboard';
 import UserDashboard from './pages/UserDashboard';
-import { User } from './types';
+import { User } from './types/index';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

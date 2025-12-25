@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getProviders } from '../services/storageService';
-import { ProviderConfig, User } from '../types';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getProviders, getSSOLoginUrl } from '../services/storageService';
+import { ProviderConfig, User } from '../types/index';
 import { Card, Button, Input } from '../components/UI';
 import { ShieldIcon, LockIcon } from '../components/Icons';
 
@@ -15,16 +15,48 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [localUsername, setLocalUsername] = useState('');
   const [localPassword, setLocalPassword] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    // Check if we returned from a backend SSO redirect with a token
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    
+    if (token) {
+        // Decode token minimally to get user info (in real app, verify signature or call /me)
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const user: User = {
+                id: payload.id || 'api-user',
+                username: payload.name || 'SSO User',
+                email: payload.email || 'user@example.com',
+                role: payload.role || 'user',
+                token: token
+            };
+            onLogin(user);
+            navigate('/dashboard');
+        } catch (e) {
+            console.error("Invalid token param");
+        }
+    }
+
     // Only load enabled providers
     const allProviders = getProviders();
     setProviders(allProviders.filter(p => p.isEnabled));
-  }, []);
+  }, [location, onLogin, navigate]);
 
   const handleSSOLogin = (provider: ProviderConfig) => {
     setLoading(true);
-    // Simulate redirection delay
+    
+    const loginUrl = getSSOLoginUrl(provider.id);
+    
+    if (loginUrl !== '#') {
+        // Real Backend Flow
+        window.location.href = loginUrl;
+        return;
+    }
+
+    // --- Mock Local Flow (Default) ---
     setTimeout(() => {
       // Simulate successful callback with a dummy JWT
       const mockUser: User = {
@@ -32,12 +64,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         username: `user_${provider.type.toLowerCase()}`,
         email: `user@${provider.name.toLowerCase().replace(/\s/g, '')}.com`,
         role: 'user',
-        token: `header.${btoa(JSON.stringify({ sub: '123', name: 'SSO User' }))}.signature`
+        token: `header.${btoa(JSON.stringify({ sub: '123', name: 'SSO User', email: 'demo@example.com', role: 'user' }))}.signature`
       };
       
       onLogin(mockUser);
       setLoading(false);
-      navigate('/dashboard'); // Redirect to user dashboard (or admin if role was admin)
+      navigate('/dashboard'); 
     }, 1500);
   };
 

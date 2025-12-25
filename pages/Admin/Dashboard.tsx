@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProviders } from '../../services/storageService';
-import { ProviderConfig } from '../../types';
+import { ProviderConfig } from '../../types/index';
 import { Card, Button } from '../../components/UI';
 import { ShieldIcon, CheckCircleIcon, PlusIcon, BarChartIcon, ActivityIcon, LockIcon } from '../../components/Icons';
 

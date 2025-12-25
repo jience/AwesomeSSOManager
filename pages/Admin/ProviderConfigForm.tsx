@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProviderById, saveProvider, deleteProvider } from '../../services/storageService';
-import { ProviderConfig, ProtocolType, MOCK_LOGOS } from '../../types';
+import { ProviderConfig, ProtocolType, MOCK_LOGOS } from '../../types/index';
 import { Card, Button, Input, Select, ConfirmationModal } from '../../components/UI';
 import { CheckCircleIcon, TrashIcon } from '../../components/Icons';
 
