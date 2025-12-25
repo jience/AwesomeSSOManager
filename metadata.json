@@ -1,0 +1,5 @@
+{
+  "name": "Unified SSO Manager",
+  "description": "A comprehensive administration dashboard for configuring third-party Single Sign-On (SSO) utilizing CAS, OIDC, OAuth2.0, and SAML2.0 protocols with JWT-based authentication.",
+  "requestFramePermissions": []
+}
