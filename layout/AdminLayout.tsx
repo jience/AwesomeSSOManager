@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, Outlet } from 'react-router-dom';
+import { useNavigate, Outlet, Navigate } from 'react-router-dom';
 import { User } from '../types';
 import { SettingsIcon, LockIcon } from '../components/Icons';
 
@@ -12,16 +12,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ user, onLogout }) => {
   const navigate = useNavigate();
 
   if (!user || user.role !== 'admin') {
-     // In a real app, this would be handled by a ProtectedRoute wrapper
-     // But for simplicity in this structure, we show an access denied or redirect
-     return (
-         <div className="min-h-screen flex items-center justify-center">
-             <div className="text-center">
-                 <h1 className="text-xl font-bold">Access Denied</h1>
-                 <button onClick={() => navigate('/')} className="text-blue-600 underline">Go to Login</button>
-             </div>
-         </div>
-     );
+     return <Navigate to="/" replace />;
   }
 
   return (
