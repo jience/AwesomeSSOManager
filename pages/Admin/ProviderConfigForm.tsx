@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProviderById, saveProvider } from '../../services/storageService';
+import { getProviderById, saveProvider, deleteProvider } from '../../services/storageService';
 import { ProviderConfig, ProtocolType, MOCK_LOGOS } from '../../types';
 import { Card, Button, Input, Select } from '../../components/UI';
-import { CheckCircleIcon } from '../../components/Icons';
+import { CheckCircleIcon, TrashIcon } from '../../components/Icons';
 
 const ProviderConfigForm: React.FC = () => {
   const { id } = useParams();
@@ -47,6 +47,13 @@ const ProviderConfigForm: React.FC = () => {
     e.preventDefault();
     saveProvider(formData);
     navigate('/admin');
+  };
+
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete "${formData.name}"? This action cannot be undone.`)) {
+      deleteProvider(formData.id);
+      navigate('/admin');
+    }
   };
 
   const renderConfigFields = () => {
@@ -241,26 +248,35 @@ const ProviderConfigForm: React.FC = () => {
 
         {/* Right Column: Protocol Config */}
         <div className="lg:col-span-2">
-          <Card className="p-6 h-full">
+          <Card className="p-6 h-full flex flex-col">
             <h3 className="text-lg font-semibold mb-4 border-b pb-2 flex items-center gap-2">
                 <CheckCircleIcon className="w-5 h-5 text-blue-600" />
                 {formData.type} Configuration
             </h3>
             
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1">
                <div className="bg-blue-50 border border-blue-100 rounded-md p-3 mb-4 text-sm text-blue-800">
                   <p className="font-medium">Instructions</p>
                   <p>Enter the {formData.type} credentials provided by your identity provider (e.g., Auth0, Keycloak, Google).</p>
                </div>
                
                {renderConfigFields()}
-
-               <div className="mt-4 pt-4 border-t border-gray-100 text-right">
-                  <Button type="submit" className="w-full sm:w-auto ml-auto">
-                    Save Configuration
-                  </Button>
-               </div>
             </div>
+
+             <div className="mt-8 pt-4 border-t border-gray-100 flex items-center justify-between">
+                {isEditing ? (
+                  <Button type="button" variant="danger" onClick={handleDelete} className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">
+                    <TrashIcon className="w-4 h-4 mr-2" />
+                    Delete
+                  </Button>
+                ) : (
+                  <div></div> /* Spacer */
+                )}
+                
+                <Button type="submit">
+                  Save Configuration
+                </Button>
+             </div>
           </Card>
         </div>
       </form>

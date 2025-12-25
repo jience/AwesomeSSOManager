@@ -17,7 +17,10 @@ const ProviderList: React.FC = () => {
     loadProviders();
   }, []);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (e: React.MouseEvent | undefined, id: string) => {
+    if (e) {
+      e.stopPropagation();
+    }
     if (window.confirm('Are you sure you want to delete this provider?')) {
       deleteProvider(id);
       loadProviders();
@@ -56,12 +59,17 @@ const ProviderList: React.FC = () => {
               {provider.description || 'No description provided.'}
             </p>
 
-            <div className="flex gap-2 pt-4 border-t border-gray-100">
-              <Button variant="secondary" className="flex-1 text-sm h-9" onClick={() => navigate(`/admin/provider/${provider.id}`)}>
-                <EditIcon className="w-3.5 h-3.5" /> Configure
+            <div className="flex gap-3 pt-4 border-t border-gray-100">
+              <Button variant="secondary" className="flex-1 text-base h-12" onClick={() => navigate(`/admin/provider/${provider.id}`)}>
+                <EditIcon className="w-5 h-5" /> Configure
               </Button>
-              <Button variant="ghost" className="text-red-600 hover:bg-red-50 h-9 w-9 p-0 flex items-center justify-center" onClick={() => handleDelete(provider.id)}>
-                <TrashIcon className="w-3.5 h-3.5" />
+              <Button 
+                variant="ghost" 
+                className="text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 h-12 w-12 p-0 flex items-center justify-center rounded-lg transition-colors shrink-0" 
+                onClick={(e) => handleDelete(e, provider.id)}
+                title="Delete Provider"
+              >
+                <TrashIcon className="w-8 h-8" />
               </Button>
             </div>
           </Card>
