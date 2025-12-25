@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProviders, deleteProvider } from '../../services/storageService';
 import { ProviderConfig } from '../../types';
-import { Card, Button, Badge } from '../../components/UI';
+import { Card, Button, Badge, ConfirmationModal } from '../../components/UI';
 import { PlusIcon, EditIcon, TrashIcon } from '../../components/Icons';
 
 const ProviderList: React.FC = () => {
   const [providers, setProviders] = useState<ProviderConfig[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const loadProviders = () => {
@@ -17,18 +19,32 @@ const ProviderList: React.FC = () => {
     loadProviders();
   }, []);
 
-  const handleDelete = (e: React.MouseEvent | undefined, id: string) => {
+  const onDeleteClick = (e: React.MouseEvent | undefined, id: string) => {
+    // Prevent event bubbling
     if (e) {
+      e.preventDefault();
       e.stopPropagation();
     }
-    if (window.confirm('Are you sure you want to delete this provider?')) {
-      deleteProvider(id);
-      loadProviders();
+    setSelectedProviderId(id);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedProviderId) {
+      // 1. Perform deletion in storage
+      deleteProvider(selectedProviderId);
+      
+      // 2. Optimistic UI Update: Filter out the deleted item from the state
+      setProviders(currentProviders => currentProviders.filter(p => p.id !== selectedProviderId));
+      
+      // 3. Reset state
+      setDeleteModalOpen(false);
+      setSelectedProviderId(null);
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Identity Providers</h2>
@@ -66,10 +82,10 @@ const ProviderList: React.FC = () => {
               <Button 
                 variant="ghost" 
                 className="text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 h-12 w-12 p-0 flex items-center justify-center rounded-lg transition-colors shrink-0" 
-                onClick={(e) => handleDelete(e, provider.id)}
+                onClick={(e) => onDeleteClick(e, provider.id)}
                 title="Delete Provider"
               >
-                <TrashIcon className="w-8 h-8" />
+                <TrashIcon className="w-6 h-6" />
               </Button>
             </div>
           </Card>
@@ -84,6 +100,14 @@ const ProviderList: React.FC = () => {
             </div>
         )}
       </div>
+
+      <ConfirmationModal 
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Provider"
+        message="Are you sure you want to delete this provider? This action cannot be undone and users may lose access."
+      />
     </div>
   );
 };

@@ -103,3 +103,28 @@ export const Badge: React.FC<BadgeProps> = ({ active }) => (
     {active ? 'Enabled' : 'Disabled'}
   </span>
 );
+
+export interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+}
+
+export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, onConfirm, title, message }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity">
+      <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl transform transition-all scale-100">
+        <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+        <p className="text-gray-600 mb-8 leading-relaxed">{message}</p>
+        <div className="flex justify-end gap-3">
+          <Button variant="secondary" onClick={onClose} className="w-24">Cancel</Button>
+          <Button variant="danger" onClick={onConfirm} className="w-24 shadow-sm">Delete</Button>
+        </div>
+      </div>
+    </div>
+  );
+};

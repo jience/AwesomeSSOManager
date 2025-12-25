@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProviderById, saveProvider, deleteProvider } from '../../services/storageService';
 import { ProviderConfig, ProtocolType, MOCK_LOGOS } from '../../types';
-import { Card, Button, Input, Select } from '../../components/UI';
+import { Card, Button, Input, Select, ConfirmationModal } from '../../components/UI';
 import { CheckCircleIcon, TrashIcon } from '../../components/Icons';
 
 const ProviderConfigForm: React.FC = () => {
@@ -10,6 +10,7 @@ const ProviderConfigForm: React.FC = () => {
   const navigate = useNavigate();
   const isEditing = !!id;
 
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [formData, setFormData] = useState<ProviderConfig>({
     id: Date.now().toString(),
     name: '',
@@ -49,11 +50,14 @@ const ProviderConfigForm: React.FC = () => {
     navigate('/admin');
   };
 
-  const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete "${formData.name}"? This action cannot be undone.`)) {
-      deleteProvider(formData.id);
-      navigate('/admin');
-    }
+  const onDeleteClick = () => {
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    deleteProvider(formData.id);
+    setDeleteModalOpen(false);
+    navigate('/admin');
   };
 
   const renderConfigFields = () => {
@@ -181,7 +185,7 @@ const ProviderConfigForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto relative">
       <div className="mb-6 flex items-center justify-between">
         <div>
            <h2 className="text-2xl font-bold text-gray-900">{isEditing ? 'Edit Provider' : 'New Provider'}</h2>
@@ -265,7 +269,7 @@ const ProviderConfigForm: React.FC = () => {
 
              <div className="mt-8 pt-4 border-t border-gray-100 flex items-center justify-between">
                 {isEditing ? (
-                  <Button type="button" variant="danger" onClick={handleDelete} className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">
+                  <Button type="button" variant="danger" onClick={onDeleteClick} className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">
                     <TrashIcon className="w-4 h-4 mr-2" />
                     Delete
                   </Button>
@@ -280,6 +284,14 @@ const ProviderConfigForm: React.FC = () => {
           </Card>
         </div>
       </form>
+
+      <ConfirmationModal 
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Provider"
+        message={`Are you sure you want to delete "${formData.name}"? This action cannot be undone.`}
+      />
     </div>
   );
 };
