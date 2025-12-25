@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import AdminLayout from './layout/AdminLayout';
 import ProviderList from './pages/Admin/ProviderList';
 import ProviderConfigForm from './pages/Admin/ProviderConfigForm';
+import Dashboard from './pages/Admin/Dashboard';
 import UserDashboard from './pages/UserDashboard';
 import { User } from './types';
 
@@ -35,7 +36,8 @@ const App: React.FC = () => {
         
         {/* Protected Admin Routes */}
         <Route path="/admin" element={<AdminLayout user={user} onLogout={handleLogout} />}>
-            <Route index element={<ProviderList />} />
+            <Route index element={<Dashboard />} />
+            <Route path="providers" element={<ProviderList />} />
             <Route path="provider/new" element={<ProviderConfigForm />} />
             <Route path="provider/:id" element={<ProviderConfigForm />} />
         </Route>

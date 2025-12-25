@@ -28,7 +28,7 @@ const ProviderConfigForm: React.FC = () => {
       if (existing) {
         setFormData(existing);
       } else {
-        navigate('/admin');
+        navigate('/admin/providers');
       }
     }
   }, [id, isEditing, navigate]);
@@ -47,7 +47,7 @@ const ProviderConfigForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     saveProvider(formData);
-    navigate('/admin');
+    navigate('/admin/providers');
   };
 
   const onDeleteClick = () => {
@@ -57,7 +57,7 @@ const ProviderConfigForm: React.FC = () => {
   const handleConfirmDelete = () => {
     deleteProvider(formData.id);
     setDeleteModalOpen(false);
-    navigate('/admin');
+    navigate('/admin/providers');
   };
 
   const renderConfigFields = () => {
@@ -191,7 +191,7 @@ const ProviderConfigForm: React.FC = () => {
            <h2 className="text-2xl font-bold text-gray-900">{isEditing ? 'Edit Provider' : 'New Provider'}</h2>
            <p className="text-gray-500">Configure connection details for SSO.</p>
         </div>
-        <Button variant="secondary" onClick={() => navigate('/admin')}>Cancel</Button>
+        <Button variant="secondary" onClick={() => navigate('/admin/providers')}>Cancel</Button>
       </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">

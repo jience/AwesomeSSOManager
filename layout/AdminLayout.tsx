@@ -1,7 +1,7 @@
 import React from 'react';
-import { useNavigate, Outlet, Navigate } from 'react-router-dom';
+import { useNavigate, Outlet, Navigate, useLocation } from 'react-router-dom';
 import { User } from '../types';
-import { SettingsIcon, LockIcon } from '../components/Icons';
+import { SettingsIcon, LockIcon, HomeIcon } from '../components/Icons';
 
 interface AdminLayoutProps {
   user: User | null;
@@ -10,10 +10,25 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ user, onLogout }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   if (!user || user.role !== 'admin') {
      return <Navigate to="/" replace />;
   }
+
+  const isActive = (path: string) => {
+    if (path === '/admin') {
+      return location.pathname === '/admin';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  const navItemClass = (path: string) => 
+    `w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+      isActive(path) 
+        ? 'bg-blue-50 text-blue-700' 
+        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+    }`;
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -29,7 +44,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ user, onLogout }) => {
         <nav className="flex-1 p-4 space-y-1">
            <button 
              onClick={() => navigate('/admin')}
-             className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-blue-50 text-blue-700"
+             className={navItemClass('/admin')}
+           >
+              <HomeIcon className="w-5 h-5 mr-3" />
+              Dashboard
+           </button>
+           <button 
+             onClick={() => navigate('/admin/providers')}
+             className={navItemClass('/admin/providers')}
            >
               <LockIcon className="w-5 h-5 mr-3" />
               Identity Providers
