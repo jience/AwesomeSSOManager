@@ -9,6 +9,16 @@
 
 该系统由 **React** 前端和 **Python Flask** 后端组成，支持“模拟模式”（完全在浏览器中运行）和“真实 API 模式”（连接到后端）。
 
+## 📸 界面展示
+
+### 登录界面
+统一的登录入口，支持本地管理员登录以及动态配置的 SSO 第三方登录。
+![登录界面](./screenshots/login.png)
+
+### 提供商管理
+直观的卡片式布局，用于查看、编辑、配置和删除身份提供商。
+![提供商列表](./screenshots/provider_list.png)
+
 ## ✨ 功能特性
 - **多协议支持**：支持配置 OIDC, OAuth2, SAML 和 CAS 提供商。
 - **提供商管理**：支持对身份提供商（IdP）进行增删改查操作。
@@ -17,16 +27,6 @@
   - **API 模式 (API Mode)**：连接到 Python Flask 服务器，实现真实的数据持久化和认证流程。
 - **用户仪表盘**：可视化展示 SSO 登录成功状态及 JWT 令牌解析。
 - **安全性**：基于 JWT 的会话管理。
-
-## 📸 界面展示
-
-### 登录界面
-统一的登录入口，支持本地管理员登录以及动态配置的 SSO 第三方登录。
-![登录界面](https://placehold.co/1000x600/f3f4f6/2563eb?text=Login+Interface+Screenshot&font=roboto)
-
-### 提供商管理
-直观的卡片式布局，用于查看、编辑、配置和删除身份提供商。
-![提供商列表](https://placehold.co/1000x600/f3f4f6/2563eb?text=Provider+List+Dashboard&font=roboto)
 
 ## 🛠 技术栈
 - **前端**：React (TypeScript), Tailwind CSS, React Router。

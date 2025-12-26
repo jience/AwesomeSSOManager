@@ -9,6 +9,16 @@
 
 The system features a **React** frontend and a **Python Flask** backend, offering both a "Mock Mode" (running entirely in the browser) and a "Real API Mode" (connected to the backend).
 
+## 📸 Screenshots
+
+### Login Interface
+The unified login page supports local authentication and multiple dynamic SSO providers.
+![Login Page](./screenshots/login.png)
+
+### Provider Management
+An intuitive grid layout to view, edit, configure, and delete identity providers.
+![Provider List](./screenshots/provider_list.png)
+
 ## ✨ Features
 - **Multi-Protocol Support**: Configure OIDC, OAuth2, SAML, and CAS providers.
 - **Provider Management**: CRUD operations for Identity Providers.
@@ -17,16 +27,6 @@ The system features a **React** frontend and a **Python Flask** backend, offerin
   - **API Mode**: Connects to a Python Flask server for real data persistence and auth flows.
 - **User Dashboard**: Visual confirmation of successful SSO login and JWT inspection.
 - **Security**: JWT-based session management (simulated in Mock mode, real in API mode).
-
-## 📸 Screenshots
-
-### Login Interface
-The unified login page supports local authentication and multiple dynamic SSO providers.
-![Login Page](https://placehold.co/1000x600/f3f4f6/2563eb?text=Unified+SSO+Login+Interface&font=roboto)
-
-### Provider Management
-An intuitive grid layout to view, edit, configure, and delete identity providers.
-![Provider List](https://placehold.co/1000x600/f3f4f6/2563eb?text=Provider+Management+Dashboard&font=roboto)
 
 ## 🛠 Tech Stack
 - **Frontend**: React (TypeScript), Tailwind CSS, React Router.
