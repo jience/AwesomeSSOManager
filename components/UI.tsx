@@ -102,7 +102,7 @@ export interface BadgeProps {
 export const Badge: React.FC<BadgeProps> = ({ active }) => (
   <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${active ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'}`}>
     <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${active ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`}></span>
-    {active ? 'Active' : 'Offline'}
+    {active ? 'Active' : 'Inactive'}
   </span>
 );
 
