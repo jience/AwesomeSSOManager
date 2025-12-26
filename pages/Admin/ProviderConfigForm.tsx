@@ -13,12 +13,14 @@ import {
   deleteProvider as apiDeleteProvider
 } from '../../services/apiService';
 import { ProviderConfig, ProtocolType, MOCK_LOGOS } from '../../types/index';
+import { useNotification } from '../../contexts/NotificationContext';
 import { Card, Button, Input, Select, ConfirmationModal } from '../../components/UI';
 import { CheckCircleIcon, TrashIcon } from '../../components/Icons';
 
 const ProviderConfigForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addToast } = useNotification();
   const isEditing = !!id;
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -45,7 +47,7 @@ const ProviderConfigForm: React.FC = () => {
       if (existing) {
         setFormData(existing);
       } else {
-        console.error("Provider not found");
+        addToast('error', 'Not Found', 'Provider could not be found.');
         navigate('/admin/providers');
       }
     };
@@ -53,7 +55,7 @@ const ProviderConfigForm: React.FC = () => {
     if (isEditing && id) {
       fetchProvider(id);
     }
-  }, [id, isEditing, navigate]);
+  }, [id, isEditing, navigate, addToast]);
 
   const handleBasicChange = (field: keyof ProviderConfig, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -80,10 +82,11 @@ const ProviderConfigForm: React.FC = () => {
       } else {
         storageSaveProvider(formData);
       }
+      addToast('success', 'Success', `Provider "${formData.name}" has been saved.`);
       navigate('/admin/providers');
     } catch (error) {
       console.error("Failed to save provider:", error);
-      alert("Error: Could not save provider configuration.");
+      addToast('error', 'Save Error', 'Could not save provider configuration.');
     }
   };
 
@@ -99,11 +102,12 @@ const ProviderConfigForm: React.FC = () => {
       } else {
         storageDeleteProvider(id);
       }
+      addToast('info', 'Deleted', `Provider "${formData.name}" has been deleted.`);
       setDeleteModalOpen(false);
       navigate('/admin/providers');
     } catch (error) {
       console.error("Failed to delete provider:", error);
-      alert("Error: Could not delete provider.");
+      addToast('error', 'Delete Error', 'Could not delete provider.');
     }
   };
 

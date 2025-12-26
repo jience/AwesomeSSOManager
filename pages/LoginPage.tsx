@@ -7,6 +7,9 @@ import { ProviderConfig, User } from '../types/index';
 import { Card, Button, Input } from '../components/UI';
 import { ShieldIcon, LockIcon } from '../components/Icons';
 
+import { useNotification } from '../contexts/NotificationContext';
+
+
 interface LoginPageProps {
   onLogin: (user: User) => void;
 }
@@ -18,6 +21,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [localPassword, setLocalPassword] = useState('admin');
   const navigate = useNavigate();
   const location = useLocation();
+  const { addToast } = useNotification();
 
   useEffect(() => {
     const loadProviders = async () => {
@@ -93,13 +97,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     setLoading(true);
 
     if (APP_CONFIG.API_MODE) {
-      // --- Real API Login ---
-      const result = await apiLogin(localUsername, localPassword);
-      if (result) {
-        onLogin(result.user);
-        navigate(result.user.role === 'admin' ? '/admin' : '/dashboard');
-      } else {
-        alert('Invalid credentials or server error.');
+      try {
+        const result = await apiLogin(localUsername, localPassword);
+        if (result) {
+          onLogin(result.user);
+          navigate(result.user.role === 'admin' ? '/admin' : '/dashboard');
+        } else {
+          // Handles server-side errors like 401 Unauthorized
+          addToast('error', 'Login Failed', 'Invalid credentials or server error.');
+        }
+      } catch (error) {
+        // Handles network errors (e.g., server is down)
+        console.error("Login API call failed:", error);
+        addToast('error', 'Connection Error', 'Failed to connect to the server. Please check if the backend is running.');
+      } finally {
+        // This ensures the loading spinner is turned off regardless of success or failure
         setLoading(false);
       }
     } else {
@@ -116,7 +128,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           onLogin(adminUser);
           navigate('/admin');
         } else {
-          alert('Invalid credentials. Try admin/admin');
+          addToast('error', 'Login Failed', 'Invalid credentials. Try admin/admin');
           setLoading(false);
         }
       }, 800);

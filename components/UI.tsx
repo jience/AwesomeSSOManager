@@ -129,3 +129,70 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, on
     </div>
   );
 };
+
+// Notification Toast Components
+import { XIcon, CheckCircleIcon, ShieldIcon } from './Icons'; // Assuming AlertTriangleIcon, InfoIcon etc. are also in Icons.tsx
+
+export type ToastType = 'success' | 'error' | 'info';
+
+export interface ToastProps {
+  id: string;
+  type: ToastType;
+  title: string;
+  message: string;
+  onDismiss: (id: string) => void;
+}
+
+const toastIcons = {
+  success: <CheckCircleIcon className="w-6 h-6 text-green-500" />,
+  error: <XIcon className="w-6 h-6 text-red-500" />, // Placeholder, ideally a different icon
+  info: <ShieldIcon className="w-6 h-6 text-blue-500" />, // Placeholder
+};
+
+const toastStyles = {
+  success: 'bg-green-50 border-green-200',
+  error: 'bg-red-50 border-red-200',
+  info: 'bg-blue-50 border-blue-200',
+};
+
+export const Toast: React.FC<ToastProps> = ({ id, type, title, message, onDismiss }) => {
+  return (
+    <div className={`w-full max-w-sm rounded-lg shadow-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden border-l-4 ${toastStyles[type]}`}>
+      <div className="p-4">
+        <div className="flex items-start">
+          <div className="flex-shrink-0">
+            {toastIcons[type]}
+          </div>
+          <div className="ml-3 w-0 flex-1 pt-0.5">
+            <p className="text-sm font-bold text-gray-900">{title}</p>
+            <p className="mt-1 text-sm text-gray-600">{message}</p>
+          </div>
+          <div className="ml-4 flex-shrink-0 flex">
+            <button
+              onClick={() => onDismiss(id)}
+              className="inline-flex text-gray-400 rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <span className="sr-only">Close</span>
+              <XIcon className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export interface ToastContainerProps {
+  children: React.ReactNode;
+}
+
+export const ToastContainer: React.FC<ToastContainerProps> = ({ children }) => (
+  <div
+    aria-live="assertive"
+    className="fixed inset-0 z-50 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start"
+  >
+    <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
+      {children}
+    </div>
+  </div>
+);
