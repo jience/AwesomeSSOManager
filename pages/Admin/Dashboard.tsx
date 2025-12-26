@@ -1,27 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getProviders } from '../../services/storageService';
-import { ProviderConfig } from '../../types/index';
+import { APP_CONFIG } from '../../config';
+import { getProviders as getProvidersFromStorage } from '../../services/storageService';
+import { getDashboardStats } from '../../services/apiService';
 import { Card, Button } from '../../components/UI';
 import { ShieldIcon, CheckCircleIcon, PlusIcon, BarChartIcon, ActivityIcon, LockIcon } from '../../components/Icons';
 
+interface DashboardStats {
+  totalProviders: number;
+  activeProviders: number;
+  protocolStats: Record<string, number>;
+}
+
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [providers, setProviders] = useState<ProviderConfig[]>([]);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalProviders: 0,
+    activeProviders: 0,
+    protocolStats: {},
+  });
 
   useEffect(() => {
-    setProviders(getProviders());
-  }, []);
+    const fetchStats = async () => {
+      if (APP_CONFIG.API_MODE) {
+        const apiStats = await getDashboardStats();
+        if (apiStats) {
+          setStats(apiStats);
+        }
+      } else {
+        // Calculate stats manually in mock mode
+        const providers = getProvidersFromStorage();
+        const total = providers.length;
+        const active = providers.filter(p => p.isEnabled).length;
+        const protocolCounts = providers.reduce((acc, curr) => {
+          acc[curr.type] = (acc[curr.type] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+        
+        setStats({
+          totalProviders: total,
+          activeProviders: active,
+          protocolStats: protocolCounts
+        });
+      }
+    };
 
-  const totalProviders = providers.length;
-  const activeProviders = providers.filter(p => p.isEnabled).length;
-  const inactiveProviders = totalProviders - activeProviders;
-  
-  // Calculate protocol breakdown
-  const protocolStats = providers.reduce((acc, curr) => {
-    acc[curr.type] = (acc[curr.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+    fetchStats();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -43,7 +68,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Total Providers</p>
-            <h3 className="text-3xl font-bold text-gray-900">{totalProviders}</h3>
+            <h3 className="text-3xl font-bold text-gray-900">{stats.totalProviders}</h3>
           </div>
         </Card>
 
@@ -53,7 +78,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Active Connections</p>
-            <h3 className="text-3xl font-bold text-gray-900">{activeProviders}</h3>
+            <h3 className="text-3xl font-bold text-gray-900">{stats.activeProviders}</h3>
           </div>
         </Card>
 
@@ -84,10 +109,10 @@ const Dashboard: React.FC = () => {
             </h3>
           </div>
           <div className="space-y-4">
-            {Object.keys(protocolStats).length === 0 ? (
+            {Object.keys(stats.protocolStats).length === 0 ? (
                 <p className="text-gray-500 italic text-sm">No protocols configured yet.</p>
             ) : (
-                Object.entries(protocolStats).map(([type, count]) => (
+                Object.entries(stats.protocolStats).map(([type, count]) => (
                 <div key={type} className="group">
                     <div className="flex justify-between text-sm mb-1">
                     <span className="font-medium text-gray-700">{type}</span>
@@ -96,7 +121,7 @@ const Dashboard: React.FC = () => {
                     <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
                     <div 
                         className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-out group-hover:bg-blue-500" 
-                        style={{ width: `${(Number(count) / totalProviders) * 100}%` }}
+                        style={{ width: `${(stats.totalProviders > 0 ? (Number(count) / stats.totalProviders) * 100 : 0)}%` }}
                     ></div>
                     </div>
                 </div>

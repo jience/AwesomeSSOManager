@@ -5,6 +5,7 @@ from flask_cors import CORS
 # Import Blueprints
 from api.auth import auth_bp
 from api.providers import providers_bp
+from api.dashboard import dashboard_bp
 
 # App Initialization
 app = Flask(__name__)
@@ -20,6 +21,7 @@ CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 # Register Blueprints
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(providers_bp, url_prefix='/api/providers')
+app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
 
 # Root Route
 @app.route('/')

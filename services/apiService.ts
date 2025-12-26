@@ -126,3 +126,19 @@ export const updateProvider = async (id: string, providerData: ProviderConfig): 
   return response.json();
 };
 
+export const getDashboardStats = async (): Promise<any> => {
+  if (!APP_CONFIG.API_MODE) return null;
+
+  const response = await fetch(`${APP_CONFIG.API_BASE_URL}/dashboard/stats`, {
+    method: 'GET',
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    console.error('Failed to fetch dashboard stats:', response.statusText);
+    return null;
+  }
+
+  return response.json();
+};
+
