@@ -10,12 +10,21 @@ import { User } from './types/index';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [loadingSession, setLoadingSession] = useState<boolean>(true);
 
-  // Restore session from localStorage for demo purposes
+  // Restore session from localStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem('sso_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem('sso_user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (e) {
+      console.error("Failed to parse user from localStorage", e);
+      // Clear corrupted data
+      localStorage.removeItem('sso_user');
+    } finally {
+      setLoadingSession(false);
     }
   }, []);
 
@@ -28,6 +37,14 @@ const App: React.FC = () => {
     setUser(null);
     localStorage.removeItem('sso_user');
   };
+  
+  if (loadingSession) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <HashRouter>
