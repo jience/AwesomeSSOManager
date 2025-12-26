@@ -18,6 +18,16 @@ The system features a **React** frontend and a **Python Flask** backend, offerin
 - **User Dashboard**: Visual confirmation of successful SSO login and JWT inspection.
 - **Security**: JWT-based session management (simulated in Mock mode, real in API mode).
 
+## 📸 Screenshots
+
+### Login Interface
+The unified login page supports local authentication and multiple dynamic SSO providers.
+![Login Page](https://placehold.co/1000x600/f3f4f6/2563eb?text=Unified+SSO+Login+Interface&font=roboto)
+
+### Provider Management
+An intuitive grid layout to view, edit, configure, and delete identity providers.
+![Provider List](https://placehold.co/1000x600/f3f4f6/2563eb?text=Provider+Management+Dashboard&font=roboto)
+
 ## 🛠 Tech Stack
 - **Frontend**: React (TypeScript), Tailwind CSS, React Router.
 - **Backend**: Python 3, Flask, PyJWT.

@@ -18,6 +18,16 @@
 - **用户仪表盘**：可视化展示 SSO 登录成功状态及 JWT 令牌解析。
 - **安全性**：基于 JWT 的会话管理。
 
+## 📸 界面展示
+
+### 登录界面
+统一的登录入口，支持本地管理员登录以及动态配置的 SSO 第三方登录。
+![登录界面](https://placehold.co/1000x600/f3f4f6/2563eb?text=Login+Interface+Screenshot&font=roboto)
+
+### 提供商管理
+直观的卡片式布局，用于查看、编辑、配置和删除身份提供商。
+![提供商列表](https://placehold.co/1000x600/f3f4f6/2563eb?text=Provider+List+Dashboard&font=roboto)
+
 ## 🛠 技术栈
 - **前端**：React (TypeScript), Tailwind CSS, React Router。
 - **后端**：Python 3, Flask, PyJWT。
