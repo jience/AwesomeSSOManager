@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { APP_CONFIG } from '../config';
-import { getProviders, getSSOLoginUrl } from '../services/storageService';
-import { login as apiLogin } from '../services/apiService';
+import { getProviders as storageGetProviders, getSSOLoginUrl } from '../services/storageService';
+import { login as apiLogin, getProviders as apiGetProviders } from '../services/apiService';
 import { ProviderConfig, User } from '../types/index';
 import { Card, Button, Input } from '../components/UI';
 import { ShieldIcon, LockIcon } from '../components/Icons';
@@ -20,6 +20,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const location = useLocation();
 
   useEffect(() => {
+    const loadProviders = async () => {
+      let allProviders: ProviderConfig[] = [];
+      if (APP_CONFIG.API_MODE) {
+        const fetchedProviders = await apiGetProviders();
+        if (fetchedProviders) {
+          allProviders = fetchedProviders;
+        }
+      } else {
+        allProviders = storageGetProviders();
+      }
+      // Only load enabled providers
+      setProviders(allProviders.filter(p => p.isEnabled));
+    };
+
+    loadProviders();
+
     // Check if we returned from a backend SSO redirect with a token
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
@@ -41,11 +57,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             console.error("Invalid token param");
         }
     }
-
-    // Only load enabled providers
-    const allProviders = getProviders();
-    setProviders(allProviders.filter(p => p.isEnabled));
   }, [location, onLogin, navigate]);
+
 
   const handleSSOLogin = (provider: ProviderConfig) => {
     setLoading(true);

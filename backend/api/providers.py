@@ -7,8 +7,7 @@ from database import PROVIDERS
 providers_bp = Blueprint('providers_api', __name__)
 
 @providers_bp.route('', methods=['GET'])
-@token_required
-def get_providers(current_user):
+def get_providers():
     """Get all providers."""
     return jsonify(list(PROVIDERS.values()))
 
