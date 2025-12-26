@@ -2,7 +2,7 @@ import uuid
 import time
 from flask import Blueprint, request, jsonify
 from .auth import token_required
-from backend.database import PROVIDERS
+from database import PROVIDERS
 
 providers_bp = Blueprint('providers_api', __name__)
 

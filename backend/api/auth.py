@@ -2,7 +2,7 @@ import jwt
 import datetime
 from functools import wraps
 from flask import Blueprint, request, jsonify, current_app
-from backend.database import USERS
+from database import USERS
 
 auth_bp = Blueprint('auth_api', __name__)
 

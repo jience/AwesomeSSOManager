@@ -1,35 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProviderById, saveProvider, deleteProvider } from '../../services/storageService';
+import { APP_CONFIG } from '../../config';
+import { 
+  getProviderById as storageGetProviderById, 
+  saveProvider as storageSaveProvider, 
+  deleteProvider as storageDeleteProvider 
+} from '../../services/storageService';
+import { 
+  getProviderById as apiGetProviderById,
+  createProvider as apiCreateProvider,
+  updateProvider as apiUpdateProvider,
+  deleteProvider as apiDeleteProvider
+} from '../../services/apiService';
 import { ProviderConfig, ProtocolType, MOCK_LOGOS } from '../../types/index';
 import { Card, Button, Input, Select, ConfirmationModal } from '../../components/UI';
 import { CheckCircleIcon, TrashIcon } from '../../components/Icons';
 
 const ProviderConfigForm: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isEditing = !!id;
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [formData, setFormData] = useState<ProviderConfig>({
-    id: Date.now().toString(),
+    id: '', // Will be set by backend or storage service
     name: '',
     type: ProtocolType.OIDC,
     logo: MOCK_LOGOS.Generic,
     isEnabled: true,
     description: '',
     config: {},
-    createdAt: Date.now()
+    createdAt: 0
   });
 
   useEffect(() => {
-    if (isEditing && id) {
-      const existing = getProviderById(id);
+    const fetchProvider = async (providerId: string) => {
+      let existing: ProviderConfig | null = null;
+      if (APP_CONFIG.API_MODE) {
+        existing = await apiGetProviderById(providerId);
+      } else {
+        existing = storageGetProviderById(providerId);
+      }
+      
       if (existing) {
         setFormData(existing);
       } else {
+        console.error("Provider not found");
         navigate('/admin/providers');
       }
+    };
+
+    if (isEditing && id) {
+      fetchProvider(id);
     }
   }, [id, isEditing, navigate]);
 
@@ -44,20 +66,45 @@ const ProviderConfigForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    saveProvider(formData);
-    navigate('/admin/providers');
+    try {
+      if (APP_CONFIG.API_MODE) {
+        if (isEditing && id) {
+          await apiUpdateProvider(id, formData);
+        } else {
+          // Omit id and createdAt for creation
+          const { id, createdAt, ...creationData } = formData;
+          await apiCreateProvider(creationData);
+        }
+      } else {
+        storageSaveProvider(formData);
+      }
+      navigate('/admin/providers');
+    } catch (error) {
+      console.error("Failed to save provider:", error);
+      alert("Error: Could not save provider configuration.");
+    }
   };
 
   const onDeleteClick = () => {
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    deleteProvider(formData.id);
-    setDeleteModalOpen(false);
-    navigate('/admin/providers');
+  const handleConfirmDelete = async () => {
+    if (!id) return;
+    try {
+      if (APP_CONFIG.API_MODE) {
+        await apiDeleteProvider(id);
+      } else {
+        storageDeleteProvider(id);
+      }
+      setDeleteModalOpen(false);
+      navigate('/admin/providers');
+    } catch (error) {
+      console.error("Failed to delete provider:", error);
+      alert("Error: Could not delete provider.");
+    }
   };
 
   const renderConfigFields = () => {

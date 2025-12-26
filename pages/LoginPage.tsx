@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { APP_CONFIG } from '../config';
 import { getProviders, getSSOLoginUrl } from '../services/storageService';
+import { login as apiLogin } from '../services/apiService';
 import { ProviderConfig, User } from '../types/index';
 import { Card, Button, Input } from '../components/UI';
 import { ShieldIcon, LockIcon } from '../components/Icons';
@@ -12,8 +14,8 @@ interface LoginPageProps {
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [providers, setProviders] = useState<ProviderConfig[]>([]);
   const [loading, setLoading] = useState(false);
-  const [localUsername, setLocalUsername] = useState('');
-  const [localPassword, setLocalPassword] = useState('');
+  const [localUsername, setLocalUsername] = useState('admin');
+  const [localPassword, setLocalPassword] = useState('admin');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -73,26 +75,39 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     }, 1500);
   };
 
-  const handleLocalLogin = (e: React.FormEvent) => {
+  const handleLocalLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Hardcoded admin for demo
-    setTimeout(() => {
-      if (localUsername === 'admin' && localPassword === 'admin') {
-        const adminUser: User = {
-          id: 'admin-1',
-          username: 'admin',
-          email: 'admin@company.com',
-          role: 'admin',
-          token: 'admin-jwt-token'
-        };
-        onLogin(adminUser);
-        navigate('/admin');
+
+    if (APP_CONFIG.API_MODE) {
+      // --- Real API Login ---
+      const result = await apiLogin(localUsername, localPassword);
+      if (result) {
+        onLogin(result.user);
+        navigate(result.user.role === 'admin' ? '/admin' : '/dashboard');
       } else {
-        alert('Invalid credentials. Try admin/admin');
+        alert('Invalid credentials or server error.');
         setLoading(false);
       }
-    }, 800);
+    } else {
+      // --- Mock Login ---
+      setTimeout(() => {
+        if (localUsername === 'admin' && localPassword === 'admin') {
+          const adminUser: User = {
+            id: 'admin-1',
+            username: 'admin',
+            email: 'admin@company.com',
+            role: 'admin',
+            token: 'admin-jwt-token' // This is a mock token
+          };
+          onLogin(adminUser);
+          navigate('/admin');
+        } else {
+          alert('Invalid credentials. Try admin/admin');
+          setLoading(false);
+        }
+      }, 800);
+    }
   };
 
   if (loading) {

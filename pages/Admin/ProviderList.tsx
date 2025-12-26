@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getProviders, deleteProvider } from '../../services/storageService';
+import { APP_CONFIG } from '../../config';
+import { getProviders as storageGetProviders, deleteProvider as storageDeleteProvider } from '../../services/storageService';
+import { getProviders as apiGetProviders, deleteProvider as apiDeleteProvider } from '../../services/apiService';
 import { ProviderConfig } from '../../types/index';
 import { Card, Button, Badge, ConfirmationModal } from '../../components/UI';
 import { PlusIcon, EditIcon, TrashIcon } from '../../components/Icons';
@@ -11,11 +13,16 @@ const ProviderList: React.FC = () => {
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const loadProviders = () => {
-    setProviders(getProviders());
-  };
-
   useEffect(() => {
+    const loadProviders = async () => {
+      if (APP_CONFIG.API_MODE) {
+        const data = await apiGetProviders();
+        setProviders(data);
+      } else {
+        setProviders(storageGetProviders());
+      }
+    };
+    
     loadProviders();
   }, []);
 
@@ -29,15 +36,18 @@ const ProviderList: React.FC = () => {
     setDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedProviderId) {
-      // 1. Perform deletion in storage
-      deleteProvider(selectedProviderId);
+      if (APP_CONFIG.API_MODE) {
+        await apiDeleteProvider(selectedProviderId);
+      } else {
+        storageDeleteProvider(selectedProviderId);
+      }
       
-      // 2. Optimistic UI Update: Filter out the deleted item from the state
+      // Optimistic UI Update: Filter out the deleted item from the state
       setProviders(currentProviders => currentProviders.filter(p => p.id !== selectedProviderId));
       
-      // 3. Reset state
+      // Reset state
       setDeleteModalOpen(false);
       setSelectedProviderId(null);
     }
