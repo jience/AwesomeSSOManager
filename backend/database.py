@@ -17,7 +17,8 @@ PROVIDERS = {
             "clientSecret": "google-client-secret",
             "authorizationUrl": "https://accounts.google.com/o/oauth2/v2/auth",
             "tokenUrl": "https://oauth2.googleapis.com/token",
-            "scope": "openid profile email"
+            "issuer": "https://accounts.google.com",
+            "scopes": "openid profile email"
         },
         "createdAt": int(time.time())
     },
@@ -31,7 +32,7 @@ PROVIDERS = {
         "config": {
             "clientId": "github-client-id",
             "clientSecret": "github-client-secret",
-            "authorizationUrl": "https://github.com/login/oauth/authorize",
+            "authUrl": "https://github.com/login/oauth/authorize",
             "tokenUrl": "https://github.com/login/oauth/access_token",
             "userInfoUrl": "https://api.github.com/user",
             "scope": "user:email"
@@ -47,7 +48,7 @@ PROVIDERS = {
         "description": "Sign in with your Okta account.",
         "config": {
             "entryPoint": "https://dev-12345.okta.com/app/generic-saml/sso/saml",
-            "issuer": "http://www.okta.com/exkabcdefg12345",
+            "ssoUrl": "http://www.okta.com/exkabcdefg12345",
             "cert": "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
         },
         "createdAt": int(time.time())
@@ -62,7 +63,7 @@ PROVIDERS = {
         "config": {
             "serverUrl": "https://cas.example.com",
             "serviceUrl": "https://app.example.com/login/cas",
-            "protocolVersion": "3.0"
+            "version": "3.0"
         },
         "createdAt": int(time.time())
     }
