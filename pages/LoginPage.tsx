@@ -218,7 +218,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
         <div className="relative mb-8 text-center">
           <span className="relative z-10 px-4 text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] before:content-[''] before:absolute before:top-1/2 before:right-full before:w-16 before:h-[1px] before:bg-white/5 after:content-[''] after:absolute after:top-1/2 after:left-full after:w-16 after:h-[1px] after:bg-white/5">
-            Neural Links
+            Or continue with
           </span>
         </div>
 
@@ -226,7 +226,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="space-y-3">
           {providers.length === 0 ? (
             <div className="text-center p-6 border border-white/5 rounded-2xl bg-black/20">
-                <p className="text-xs text-gray-500 italic">No neural links detected.</p>
+                <p className="text-xs text-gray-500 italic">No SSO providers configured.</p>
             </div>
           ) : (
             providers.map(provider => (

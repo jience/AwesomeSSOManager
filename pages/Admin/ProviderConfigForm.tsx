@@ -15,7 +15,7 @@ import {
 import { ProviderConfig, ProtocolType, MOCK_LOGOS } from '../../types/index';
 import { useNotification } from '../../contexts/NotificationContext';
 import { Card, Button, Input, Select, ConfirmationModal } from '../../components/UI';
-import { CheckCircleIcon, TrashIcon } from '../../components/Icons';
+import { CheckCircleIcon, TrashIcon, ShieldIcon } from '../../components/Icons';
 
 const ProviderConfigForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -195,9 +195,9 @@ const ProviderConfigForm: React.FC = () => {
               required
             />
             <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">X.509 Certificate</label>
+              <label className="block text-[10px] font-bold text-cyan-500/70 uppercase tracking-widest mb-2 ml-1">X.509 Certificate</label>
               <textarea
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 font-mono text-xs bg-gray-50 focus:bg-white text-gray-900"
+                className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 text-white placeholder-gray-600 transition-all hover:bg-black/60 h-32 font-mono text-xs"
                 value={formData.config.cert || ''}
                 onChange={(e) => handleConfigChange('cert', e.target.value)}
                 placeholder="-----BEGIN CERTIFICATE-----..."
@@ -236,32 +236,32 @@ const ProviderConfigForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto relative">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="max-w-5xl mx-auto relative pb-20">
+      <div className="mb-10 flex items-center justify-between">
         <div>
-           <h2 className="text-2xl font-bold text-gray-900">{isEditing ? 'Edit Provider' : 'New Provider'}</h2>
-           <p className="text-gray-500">Configure connection details for SSO.</p>
+           <h2 className="text-3xl font-extrabold text-white tracking-tight">{isEditing ? 'Edit Provider' : 'New Provider'}</h2>
+           <p className="text-gray-400 mt-1">Configure connection details for SSO.</p>
         </div>
         <Button variant="secondary" onClick={() => navigate('/admin/providers')}>Cancel</Button>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Basic Info */}
-        <div className="lg:col-span-1 space-y-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4 border-b pb-2">General</h3>
+        <div className="lg:col-span-1 space-y-8">
+          <Card className="p-8">
+            <h3 className="text-xs font-black text-cyan-500 uppercase tracking-[0.3em] mb-6 border-b border-white/5 pb-4 text-center">Base Parameters</h3>
             <Input 
-              label="Provider Name" 
+              label="Provider Name"
               value={formData.name} 
               onChange={(e) => handleBasicChange('name', e.target.value)} 
               required
               placeholder="e.g. Corporate Okta"
             />
 
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+            <div className="mb-6">
+              <label className="block text-[10px] font-bold text-cyan-500/70 uppercase tracking-widest mb-2 ml-1">Description</label>
               <textarea
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-24 bg-gray-50 focus:bg-white text-gray-900"
+                className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 text-white placeholder-gray-600 transition-all hover:bg-black/60 h-32"
                 value={formData.description || ''}
                 onChange={(e) => handleBasicChange('description', e.target.value)}
                 placeholder="Enter a brief description for this provider..."
@@ -281,17 +281,17 @@ const ProviderConfigForm: React.FC = () => {
               required
             />
 
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-              <div className="flex items-center gap-3">
+            <div className="mb-6">
+              <label className="block text-[10px] font-bold text-cyan-500/70 uppercase tracking-widest mb-2 ml-1">State</label>
+              <div className="flex items-center gap-4 bg-black/20 p-3 rounded-xl border border-white/5">
                  <button
                     type="button"
                     onClick={() => handleBasicChange('isEnabled', !formData.isEnabled)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formData.isEnabled ? 'bg-blue-600' : 'bg-gray-200'}`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${formData.isEnabled ? 'bg-cyan-600' : 'bg-gray-700'}`}
                  >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition duration-200 ease-in-out ${formData.isEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
                  </button>
-                 <span className="text-sm text-gray-600">{formData.isEnabled ? 'Active' : 'Inactive'}</span>
+                 <span className={`text-xs font-bold uppercase tracking-wider ${formData.isEnabled ? 'text-cyan-400' : 'text-gray-500'}`}>{formData.isEnabled ? 'Active' : 'Inactive'}</span>
               </div>
             </div>
             
@@ -302,10 +302,10 @@ const ProviderConfigForm: React.FC = () => {
               placeholder="https://..."
             />
             
-            <div className="mb-4">
-                 <label className="block text-sm font-semibold text-gray-700 mb-1">Preview</label>
-                 <div className="border rounded p-2 flex justify-center bg-gray-50">
-                     <img src={formData.logo} alt="Preview" className="h-12 w-12 object-contain" onError={(e) => e.currentTarget.src = MOCK_LOGOS.Generic}/>
+            <div className="mb-2">
+                 <label className="block text-[10px] font-bold text-cyan-500/70 uppercase tracking-widest mb-2 ml-1 text-center">Preview</label>
+                 <div className="border border-white/10 rounded-2xl p-6 flex justify-center bg-black/40 shadow-inner">
+                     <img src={formData.logo} alt="Preview" className="h-16 w-16 object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" onError={(e) => e.currentTarget.src = MOCK_LOGOS.Generic}/>
                  </div>
             </div>
           </Card>
@@ -313,24 +313,29 @@ const ProviderConfigForm: React.FC = () => {
 
         {/* Right Column: Protocol Config */}
         <div className="lg:col-span-2">
-          <Card className="p-6 h-full flex flex-col">
-            <h3 className="text-lg font-semibold mb-4 border-b pb-2 flex items-center gap-2">
-                <CheckCircleIcon className="w-5 h-5 text-blue-600" />
+          <Card className="p-8 h-full flex flex-col group transition-all duration-500">
+            <h3 className="text-xs font-black text-cyan-500 uppercase tracking-[0.3em] mb-6 border-b border-white/5 pb-4 flex items-center gap-3">
+                <CheckCircleIcon className="w-5 h-5" />
                 {formData.type} Configuration
             </h3>
             
-            <div className="space-y-4 flex-1">
-               <div className="bg-blue-50 border border-blue-100 rounded-md p-3 mb-4 text-sm text-blue-800">
-                  <p className="font-medium">Instructions</p>
-                  <p>Enter the {formData.type} credentials provided by your identity provider (e.g., Auth0, Keycloak, Google).</p>
+            <div className="space-y-6 flex-1">
+               <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-2xl p-5 mb-6">
+                  <p className="text-cyan-400 text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <ShieldIcon className="w-3 h-3" />
+                    Instructions
+                  </p>
+                  <p className="text-gray-400 text-sm leading-relaxed font-light">Enter the {formData.type} credentials provided by your identity provider (e.g., Auth0, Keycloak, Google).</p>
                </div>
                
-               {renderConfigFields()}
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                  {renderConfigFields()}
+               </div>
             </div>
 
-             <div className="mt-8 pt-4 border-t border-gray-100 flex items-center justify-between">
+             <div className="mt-12 pt-8 border-t border-white/5 flex items-center justify-between">
                 {isEditing ? (
-                  <Button type="button" variant="danger" onClick={onDeleteClick} className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">
+                  <Button type="button" variant="danger" onClick={onDeleteClick} className="px-8 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
                     <TrashIcon className="w-4 h-4 mr-2" />
                     Delete
                   </Button>
@@ -338,7 +343,7 @@ const ProviderConfigForm: React.FC = () => {
                   <div></div> /* Spacer */
                 )}
                 
-                <Button type="submit">
+                <Button type="submit" className="px-10 py-4 text-base shadow-[0_0_30px_rgba(6,182,212,0.2)]">
                   Save Configuration
                 </Button>
              </div>
