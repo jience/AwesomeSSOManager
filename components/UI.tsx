@@ -1,4 +1,5 @@
 import React from 'react';
+import { XIcon, CheckCircleIcon, ShieldIcon } from './Icons';
 
 export interface ButtonProps {
   children: React.ReactNode;
@@ -132,8 +133,6 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, on
 };
 
 // Notification Toast Components
-import { XIcon, CheckCircleIcon, ShieldIcon } from './Icons';
-
 export type ToastType = 'success' | 'error' | 'info';
 
 export interface ToastProps {
@@ -181,6 +180,10 @@ export const Toast: React.FC<ToastProps> = ({ id, type, title, message, onDismis
     </div>
   );
 };
+
+export interface ToastContainerProps {
+  children: React.ReactNode;
+}
 
 export const ToastContainer: React.FC<ToastContainerProps> = ({ children }) => (
   <div
