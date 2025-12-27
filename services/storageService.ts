@@ -138,7 +138,7 @@ export const getProviderById = (id: string): ProviderConfig | undefined => {
 // --- Helper for SSO Login URL ---
 export const getSSOLoginUrl = (providerId: string): string => {
     if (API_MODE) {
-        return `${API_BASE_URL.replace('/api', '')}/auth/login/${providerId}`;
+        return `${API_BASE_URL}/auth/sso/login/${providerId}`;
     }
     return '#'; 
 };
