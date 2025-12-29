@@ -218,7 +218,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
         <div className="relative mb-8 text-center">
           <span className="relative z-10 px-4 text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] before:content-[''] before:absolute before:top-1/2 before:right-full before:w-16 before:h-[1px] before:bg-white/5 after:content-[''] after:absolute after:top-1/2 after:left-full after:w-16 after:h-[1px] after:bg-white/5">
-            Or continue with
+            Or Use Sign-on
           </span>
         </div>
 
@@ -243,7 +243,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                         <ShieldIcon className="h-4 w-4 text-cyan-400" />
                         )}
                     </div>
-                    <span className="group-hover:text-white transition-colors">Connect <span className="font-bold text-white">{provider.name}</span></span>
+                    <span className="group-hover:text-white transition-colors">Continue with <span className="font-bold text-white">{provider.name}</span></span>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-[9px] font-bold text-cyan-400/60 uppercase tracking-tighter bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/10 group-hover:text-cyan-300 group-hover:border-cyan-500/30">
