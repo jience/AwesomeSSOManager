@@ -50,7 +50,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             const payload = JSON.parse(atob(token.split('.')[1]));
             const user: User = {
                 id: payload.id || 'api-user',
-                username: payload.name || 'SSO User',
+                username: payload.username || payload.name || 'SSO User',
                 email: payload.email || 'user@example.com',
                 role: payload.role || 'user',
                 token: token

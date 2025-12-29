@@ -51,7 +51,9 @@ def login():
 
     # Generate JWT
     token = jwt.encode({
+        'id': user['id'],
         'username': user['username'],
+        'email': user['email'],
         'role': user['role'],
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
     }, current_app.config['SECRET_KEY'], algorithm="HS256")
@@ -112,7 +114,9 @@ def sso_callback(provider_id):
         
         # 3. Generate system JWT
         token = jwt.encode({
+            'id': user['id'],
             'username': user['username'],
+            'email': user['email'],
             'role': user['role'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
         }, current_app.config['SECRET_KEY'], algorithm="HS256")
