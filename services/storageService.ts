@@ -16,6 +16,9 @@ const DEFAULT_PROVIDERS: ProviderConfig[] = [
       clientId: 'mock-google-client-id',
       clientSecret: 'mock-google-secret',
       issuer: 'https://accounts.google.com',
+      authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+      tokenUrl: 'https://oauth2.googleapis.com/token',
+      userInfoUrl: 'https://openidconnect.googleapis.com/v1/userinfo',
       scopes: 'openid profile email'
     }
   },

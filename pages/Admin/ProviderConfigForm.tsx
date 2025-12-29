@@ -137,6 +137,26 @@ const ProviderConfigForm: React.FC = () => {
               required
             />
             <Input 
+              label="Authorization Endpoint" 
+              value={formData.config.authorizationUrl || ''} 
+              onChange={(e) => handleConfigChange('authorizationUrl', e.target.value)} 
+              placeholder="https://accounts.google.com/o/oauth2/v2/auth"
+              required
+            />
+            <Input 
+              label="Token Endpoint" 
+              value={formData.config.tokenUrl || ''} 
+              onChange={(e) => handleConfigChange('tokenUrl', e.target.value)} 
+              placeholder="https://oauth2.googleapis.com/token"
+              required
+            />
+            <Input 
+              label="User Info Endpoint" 
+              value={formData.config.userInfoUrl || ''} 
+              onChange={(e) => handleConfigChange('userInfoUrl', e.target.value)} 
+              placeholder="https://openidconnect.googleapis.com/v1/userinfo"
+            />
+            <Input 
               label="Scopes" 
               value={formData.config.scopes || ''} 
               onChange={(e) => handleConfigChange('scopes', e.target.value)} 
@@ -183,15 +203,17 @@ const ProviderConfigForm: React.FC = () => {
         return (
           <>
             <Input 
-              label="IdP Entity ID" 
-              value={formData.config.entryPoint || ''} 
-              onChange={(e) => handleConfigChange('entryPoint', e.target.value)} 
+              label="IdP Entity ID (Issuer URL)"
+              value={formData.config.issuer || ''} 
+              onChange={(e) => handleConfigChange('issuer', e.target.value)} 
+              placeholder="http://www.okta.com/exk..."
               required
             />
             <Input 
-              label="SSO URL (Single Sign On Service)" 
-              value={formData.config.ssoUrl || ''} 
-              onChange={(e) => handleConfigChange('ssoUrl', e.target.value)} 
+              label="IdP SSO Endpoint (IdP Sign-in URL)"
+              value={formData.config.entryPoint || ''} 
+              onChange={(e) => handleConfigChange('entryPoint', e.target.value)} 
+              placeholder="https://idp.example.com/sso/saml"
               required
             />
             <div className="mb-4">
