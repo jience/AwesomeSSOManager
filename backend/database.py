@@ -48,7 +48,7 @@ PROVIDERS = {
         "description": "Sign in with your Okta account.",
         "config": {
             "entryPoint": "https://dev-12345.okta.com/app/generic-saml/sso/saml",
-            "ssoUrl": "http://www.okta.com/exkabcdefg12345",
+            "issuer": "http://www.okta.com/exkabcdefg12345",
             "cert": "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
         },
         "createdAt": int(time.time())

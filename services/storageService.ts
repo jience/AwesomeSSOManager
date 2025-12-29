@@ -33,7 +33,7 @@ const DEFAULT_PROVIDERS: ProviderConfig[] = [
     config: {
       clientId: 'mock-github-id',
       clientSecret: 'mock-github-secret',
-      authUrl: 'https://github.com/login/oauth/authorize',
+      authorizationUrl: 'https://github.com/login/oauth/authorize',
       tokenUrl: 'https://github.com/login/oauth/access_token',
       userInfoUrl: 'https://api.github.com/user'
     }
