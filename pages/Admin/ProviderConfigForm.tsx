@@ -182,8 +182,8 @@ const ProviderConfigForm: React.FC = () => {
             />
             <Input 
               label="Authorization URL" 
-              value={formData.config.authUrl || ''} 
-              onChange={(e) => handleConfigChange('authUrl', e.target.value)} 
+              value={formData.config.authorizationUrl || ''}
+              onChange={(e) => handleConfigChange('authorizationUrl', e.target.value)}
               required
             />
             <Input 

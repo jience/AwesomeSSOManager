@@ -1,6 +1,8 @@
-from .oidc import OIDCHandler
 from authlib.integrations.requests_client import OAuth2Session
+
+from .oidc import OIDCHandler
 from ..models import SSOUser
+
 
 class OAuth2Handler(OIDCHandler):
     """

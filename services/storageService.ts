@@ -26,7 +26,7 @@ const DEFAULT_PROVIDERS: ProviderConfig[] = [
     id: '2',
     name: 'GitHub',
     type: ProtocolType.OAUTH2,
-    logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg',
+    logo: 'https://docs.github.com/assets/cb-345/images/site/favicon.png',
     isEnabled: true,
     description: 'Developer access',
     createdAt: Date.now(),

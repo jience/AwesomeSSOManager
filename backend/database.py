@@ -26,16 +26,16 @@ PROVIDERS = {
         "id": "2",
         "name": "GitHub",
         "type": "OAUTH2",
-        "logo": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+        "logo": "https://docs.github.com/assets/cb-345/images/site/favicon.png",
         "isEnabled": True,
         "description": "Sign in with your GitHub account.",
         "config": {
             "clientId": "github-client-id",
             "clientSecret": "github-client-secret",
-            "authUrl": "https://github.com/login/oauth/authorize",
+            "authorizationUrl": "https://github.com/login/oauth/authorize",
             "tokenUrl": "https://github.com/login/oauth/access_token",
             "userInfoUrl": "https://api.github.com/user",
-            "scope": "user:email"
+            "scopes": "user:email"
         },
         "createdAt": int(time.time())
     },
