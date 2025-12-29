@@ -128,4 +128,5 @@ def sso_callback(provider_id):
         
     except Exception as e:
         # On error, redirect to login page with error message (optional)
+        print(f'Exception: {e}')
         return redirect(f"http://localhost:5173/#/?error={str(e)}")
