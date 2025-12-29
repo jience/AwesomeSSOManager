@@ -112,9 +112,6 @@ const ProviderList: React.FC = () => {
                     <ShieldIcon className="w-8 h-8 text-gray-600" />
                 </div>
                 <p className="text-gray-500 font-medium">No providers configured yet.</p>
-                <Button variant="ghost" className="mt-4 text-cyan-400 hover:text-cyan-300" onClick={() => navigate('/admin/provider/new')}>
-                    Create your first provider
-                </Button>
             </div>
         )}
       </div>
