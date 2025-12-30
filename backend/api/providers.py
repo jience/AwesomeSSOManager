@@ -8,8 +8,7 @@ from models import Provider
 providers_bp = Blueprint('providers_api', __name__)
 
 @providers_bp.route('', methods=['GET'])
-@token_required
-def get_providers(current_user):
+def get_providers():
     """Get all providers."""
     providers = Provider.query.all()
     return jsonify([p.to_dict() for p in providers])
