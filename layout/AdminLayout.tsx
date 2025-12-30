@@ -75,11 +75,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ user, onLogout }) => {
 
         <div className="p-4 border-t border-white/5 bg-black/20">
            <div className="flex items-center gap-3 mb-4 px-2">
-               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 border border-white/10 flex items-center justify-center text-xs font-bold text-cyan-400">
-                   AD
+               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 border border-white/10 flex items-center justify-center text-xs font-bold text-cyan-400 uppercase">
+                   {user.username.substring(0, 2)}
                </div>
                <div className="text-sm">
-                   <p className="font-medium text-white">Administrator</p>
+                   <p className="font-medium text-white">{user.username}</p>
                    <p className="text-xs text-gray-500 truncate w-32">{user.email}</p>
                </div>
            </div>

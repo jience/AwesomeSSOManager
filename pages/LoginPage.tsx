@@ -56,7 +56,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 token: token
             };
             onLogin(user);
-            navigate('/dashboard');
+            if (user.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (e) {
             console.error("Invalid token param");
         }
