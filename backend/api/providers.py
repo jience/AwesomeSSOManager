@@ -9,9 +9,15 @@ providers_bp = Blueprint('providers_api', __name__)
 
 @providers_bp.route('', methods=['GET'])
 def get_providers():
-    """Get all providers."""
+    """Get all providers (Public - Sanitized)."""
     providers = Provider.query.all()
-    return jsonify([p.to_dict() for p in providers])
+    # Sanitize: Remove config which may contain secrets
+    results = []
+    for p in providers:
+        data = p.to_dict()
+        data.pop('config', None)
+        results.append(data)
+    return jsonify(results)
 
 @providers_bp.route('/<provider_id>', methods=['GET'])
 @token_required
