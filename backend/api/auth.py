@@ -3,7 +3,8 @@ import datetime
 import uuid
 from functools import wraps
 from flask import Blueprint, request, jsonify, current_app, redirect, url_for
-from database import USERS, PROVIDERS
+from extensions import db
+from models import User, Provider
 from .sso import get_sso_handler
 
 auth_bp = Blueprint('auth_api', __name__)
@@ -23,7 +24,7 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = USERS.get(data['username'])
+            current_user = User.query.filter_by(username=data['username']).first()
             if not current_user:
                  return jsonify({'message': 'User not found!'}), 401
         except jwt.ExpiredSignatureError:
@@ -44,89 +45,82 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    user = USERS.get(username)
+    user = User.query.filter_by(username=username).first()
 
-    if not user or user['password'] != password:
+    if not user or user.password != password:
         return jsonify({'error': 'Invalid credentials'}), 401
 
     # Generate JWT
     token = jwt.encode({
-        'id': user['id'],
-        'username': user['username'],
-        'email': user['email'],
-        'role': user['role'],
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+        'role': user.role,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
     }, current_app.config['SECRET_KEY'], algorithm="HS256")
     
-    # Prepare user data to return
-    user_data = {k: v for k, v in user.items() if k != 'password'}
-
     return jsonify({
         'token': token,
-        'user': user_data
+        'user': user.to_dict()
         })
 
 # --- NEW SSO ROUTES ---
 
 @auth_bp.route('/sso/login/<provider_id>')
 def sso_login(provider_id):
-    provider = PROVIDERS.get(provider_id)
+    provider = Provider.query.get(provider_id)
     if not provider:
         return jsonify({'error': 'Provider not found'}), 404
     
     try:
-        handler = get_sso_handler(provider['type'])
+        handler = get_sso_handler(provider.type)
         # Construct the callback URL pointing to our backend
         # In production, ensure this matches your external domain
         callback_url = url_for('auth_api.sso_callback', provider_id=provider_id, _external=True)
         
-        login_url = handler.get_login_url(provider['config'], callback_url)
+        login_url = handler.get_login_url(provider.config, callback_url)
         return redirect(login_url)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 @auth_bp.route('/sso/callback/<provider_id>', methods=['GET', 'POST'])
 def sso_callback(provider_id):
-    provider = PROVIDERS.get(provider_id)
+    provider = Provider.query.get(provider_id)
     if not provider:
         return jsonify({'error': 'Provider not found'}), 404
 
     try:
-        handler = get_sso_handler(provider['type'])
+        handler = get_sso_handler(provider.type)
         callback_url = url_for('auth_api.sso_callback', provider_id=provider_id, _external=True)
         
         # 1. Authenticate with the IdP and get standardized user info
-        sso_user = handler.authenticate(provider['config'], request.args, callback_url)
+        sso_user = handler.authenticate(provider.config, request.args, callback_url)
         
         # 2. Find or create local user
-        username = sso_user.username
-        if username not in USERS:
+        user = User.query.filter_by(username=sso_user.username).first()
+        if not user:
             # Automatic registration
-            USERS[username] = {
-                "id": str(uuid.uuid4()),
-                "username": username,
-                "password": str(uuid.uuid4()), # Random password
-                "email": sso_user.email,
-                "role": "user"
-            }
-        
-        user = USERS[username]
+            user = User(
+                username=sso_user.username,
+                email=sso_user.email,
+                password=str(uuid.uuid4()), # Random password
+                role='user'
+            )
+            db.session.add(user)
+            db.session.commit()
         
         # 3. Generate system JWT
         token = jwt.encode({
-            'id': user['id'],
-            'username': user['username'],
-            'email': user['email'],
-            'role': user['role'],
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'role': user.role,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
         }, current_app.config['SECRET_KEY'], algorithm="HS256")
         
         # 4. Redirect back to frontend with the token
-        # The frontend LoginPage.tsx already handles the ?token=... param in useEffect
         frontend_url = f"http://localhost:5173/#/?token={token}"
         return redirect(frontend_url)
         
     except Exception as e:
-        # On error, redirect to login page with error message (optional)
-        print(f'Exception: {e}')
         return redirect(f"http://localhost:5173/#/?error={str(e)}")

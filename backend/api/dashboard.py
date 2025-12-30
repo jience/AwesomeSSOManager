@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from collections import Counter
 from .auth import token_required
-from database import PROVIDERS
+from models import Provider
 
 dashboard_bp = Blueprint('dashboard_api', __name__)
 
@@ -11,12 +11,12 @@ def get_stats(current_user):
     """
     Calculate and return dashboard statistics.
     """
-    all_providers = list(PROVIDERS.values())
+    all_providers = Provider.query.all()
     
     total_providers = len(all_providers)
-    active_providers = sum(1 for p in all_providers if p.get('isEnabled', False))
+    active_providers = sum(1 for p in all_providers if p.is_enabled)
     
-    protocol_stats = Counter(p['type'] for p in all_providers)
+    protocol_stats = Counter(p.type for p in all_providers)
     
     stats = {
         "totalProviders": total_providers,
